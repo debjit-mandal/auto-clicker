@@ -3,8 +3,8 @@ import time
 import random
 import keyboard
 
-# Define the target coordinates for clicking
-click_positions = [(500, 500), (600, 600), (700, 700)]
+# List to store the recorded click positions
+click_positions = []
 
 # Set the minimum and maximum delay between clicks in seconds
 min_delay = 0.5
@@ -12,10 +12,21 @@ max_delay = 2.0
 
 # Set the key to stop the clicking process
 stop_key = "q"
+record_key = "r"
 
 # Pause for a few seconds to allow you to position the mouse cursor
 print("Move your mouse to the desired clicking positions...")
 time.sleep(5)
+
+# Record click positions
+print("Press '{}' to record the current mouse position.".format(record_key))
+print("Press '{}' to stop recording.".format(stop_key))
+while True:
+    if keyboard.is_pressed(record_key):
+        click_positions.append(pyautogui.position())
+        time.sleep(0.2)
+    if keyboard.is_pressed(stop_key):
+        break
 
 # Perform the clicks
 print("Press '{}' to stop the clicking process.".format(stop_key))
