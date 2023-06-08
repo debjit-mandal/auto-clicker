@@ -15,11 +15,16 @@ max_delay = 2.0
 stop_key = "q"
 record_key = "r"
 drag_key = "d"
+duration_increase_key = "+"
+duration_decrease_key = "-"
 
 # Set the initial click interval
 click_interval = 1.0
 
-# Set the duration of the clicking process in seconds
+# Set the initial drag duration in seconds
+drag_duration = 0.5
+
+# Set the initial click duration in seconds
 click_duration = 10
 
 # Pause for a few seconds to allow you to position the mouse cursor
@@ -65,17 +70,19 @@ try:
                 raise KeyboardInterrupt
 
         if drag_path:
-            pyautogui.dragTo(drag_path[-1][0], drag_path[-1][1], duration=0.5)
+            pyautogui.dragTo(
+                drag_path[-1][0], drag_path[-1][1], duration=drag_duration
+            )
 
         # Check if interval adjustment keys are pressed
-        if keyboard.is_pressed("+"):
-            click_interval += 0.1
-            print("Click interval increased to:", click_interval)
-        elif keyboard.is_pressed("-"):
-            click_interval -= 0.1
-            if click_interval < 0.1:
-                click_interval = 0.1
-            print("Click interval decreased to:", click_interval)
+        if keyboard.is_pressed(duration_increase_key):
+            drag_duration += 0.1
+            print("Drag duration increased to:", drag_duration)
+        elif keyboard.is_pressed(duration_decrease_key):
+            drag_duration -= 0.1
+            if drag_duration < 0.1:
+                drag_duration = 0.1
+            print("Drag duration decreased to:", drag_duration)
 
         time.sleep(0.1)  # Small delay between checks
 
