@@ -6,10 +6,15 @@ Note: Automated clicking can be against the terms of service of certain applicat
 Note: 
 
 stop_key = "q"
+
 record_key = "r"
+
 drag_key = "d"
+
 duration_increase_key = "+"
+
 duration_decrease_key = "-"
+
 pause_key = "p"
 
 Before running the script, make sure the `pyautogui` library must be installed by running `pip install pyautogui` in the terminal or command prompt.
