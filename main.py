@@ -3,8 +3,9 @@ import time
 import random
 import keyboard
 
-# List to store the recorded click positions
+# List to store the recorded click positions and drag path
 click_positions = []
+drag_path = []
 
 # Set the minimum and maximum delay between clicks in seconds
 min_delay = 0.5
@@ -13,8 +14,7 @@ max_delay = 2.0
 # Set the key to stop the clicking process
 stop_key = "q"
 record_key = "r"
-interval_increase_key = "+"
-interval_decrease_key = "-"
+drag_key = "d"
 
 # Set the initial click interval
 click_interval = 1.0
@@ -26,17 +26,28 @@ click_duration = 10
 print("Move your mouse to the desired clicking positions...")
 time.sleep(5)
 
-# Record click positions
+# Record click positions and drag path
 print("Press '{}' to record the current mouse position.".format(record_key))
+print("Press '{}' to record the drag path.".format(drag_key))
 print("Press '{}' to stop recording.".format(stop_key))
+
+recording_drag = False
+
 while True:
     if keyboard.is_pressed(record_key):
         click_positions.append(pyautogui.position())
         time.sleep(0.2)
-    if keyboard.is_pressed(stop_key):
+    elif keyboard.is_pressed(drag_key):
+        recording_drag = True
+        print("Recording drag path...")
+        time.sleep(0.2)
+    elif recording_drag and pyautogui.position() not in drag_path:
+        drag_path.append(pyautogui.position())
+        time.sleep(0.1)
+    elif keyboard.is_pressed(stop_key):
         break
 
-# Perform the clicks
+# Perform the clicks and drag
 print("Press '{}' to stop the clicking process.".format(stop_key))
 start_time = time.time()
 try:
@@ -53,11 +64,14 @@ try:
                 print("Clicking process stopped.")
                 raise KeyboardInterrupt
 
+        if drag_path:
+            pyautogui.dragTo(drag_path[-1][0], drag_path[-1][1], duration=0.5)
+
         # Check if interval adjustment keys are pressed
-        if keyboard.is_pressed(interval_increase_key):
+        if keyboard.is_pressed("+"):
             click_interval += 0.1
             print("Click interval increased to:", click_interval)
-        elif keyboard.is_pressed(interval_decrease_key):
+        elif keyboard.is_pressed("-"):
             click_interval -= 0.1
             if click_interval < 0.1:
                 click_interval = 0.1
