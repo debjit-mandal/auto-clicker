@@ -13,6 +13,11 @@ max_delay = 2.0
 # Set the key to stop the clicking process
 stop_key = "q"
 record_key = "r"
+interval_increase_key = "+"
+interval_decrease_key = "-"
+
+# Set the initial click interval
+click_interval = 1.0
 
 # Set the duration of the clicking process in seconds
 click_duration = 10
@@ -47,6 +52,18 @@ try:
             if keyboard.is_pressed(stop_key):
                 print("Clicking process stopped.")
                 raise KeyboardInterrupt
+
+        # Check if interval adjustment keys are pressed
+        if keyboard.is_pressed(interval_increase_key):
+            click_interval += 0.1
+            print("Click interval increased to:", click_interval)
+        elif keyboard.is_pressed(interval_decrease_key):
+            click_interval -= 0.1
+            if click_interval < 0.1:
+                click_interval = 0.1
+            print("Click interval decreased to:", click_interval)
+
+        time.sleep(0.1)  # Small delay between checks
 
 except KeyboardInterrupt:
     print("Clicking process interrupted.")
