@@ -17,6 +17,7 @@ record_key = "r"
 drag_key = "d"
 duration_increase_key = "+"
 duration_decrease_key = "-"
+pause_key = "p"
 
 # Set the initial click interval
 click_interval = 1.0
@@ -55,34 +56,50 @@ while True:
 # Perform the clicks and drag
 print("Press '{}' to stop the clicking process.".format(stop_key))
 start_time = time.time()
+is_paused = False
+pause_duration = 0
 try:
     while time.time() - start_time < click_duration:
-        for position in click_positions:
-            pyautogui.click(position[0], position[1])
+        if is_paused:
+            time.sleep(0.1)
+            pause_duration += 0.1
+            if keyboard.is_pressed(pause_key):
+                is_paused = False
+                print("Resuming clicking process...")
+                time.sleep(0.2)
+        else:
+            for position in click_positions:
+                pyautogui.click(position[0], position[1])
 
-            # Generate a random delay between clicks
-            delay = random.uniform(min_delay, max_delay)
-            time.sleep(delay)
+                # Generate a random delay between clicks
+                delay = random.uniform(min_delay, max_delay)
+                time.sleep(delay)
 
-            # Check if the stop key is pressed
-            if keyboard.is_pressed(stop_key):
-                print("Clicking process stopped.")
-                raise KeyboardInterrupt
+                # Check if the stop key is pressed
+                if keyboard.is_pressed(stop_key):
+                    print("Clicking process stopped.")
+                    raise KeyboardInterrupt
 
-        if drag_path:
-            pyautogui.dragTo(
-                drag_path[-1][0], drag_path[-1][1], duration=drag_duration
-            )
+            if drag_path:
+                pyautogui.dragTo(
+                    drag_path[-1][0], drag_path[-1][1], duration=drag_duration
+                )
 
-        # Check if interval adjustment keys are pressed
-        if keyboard.is_pressed(duration_increase_key):
-            drag_duration += 0.1
-            print("Drag duration increased to:", drag_duration)
-        elif keyboard.is_pressed(duration_decrease_key):
-            drag_duration -= 0.1
-            if drag_duration < 0.1:
-                drag_duration = 0.1
-            print("Drag duration decreased to:", drag_duration)
+            # Check if interval adjustment keys are pressed
+            if keyboard.is_pressed(duration_increase_key):
+                drag_duration += 0.1
+                print("Drag duration increased to:", drag_duration)
+            elif keyboard.is_pressed(duration_decrease_key):
+                drag_duration -= 0.1
+                if drag_duration < 0.1:
+                    drag_duration = 0.1
+                print("Drag duration decreased to:", drag_duration)
+
+            # Check if pause key is pressed
+            if keyboard.is_pressed(pause_key):
+                is_paused = True
+                print("Clicking process paused. Press '{}' to resume...".format(pause_key))
+                time.sleep(0.2)
 
         time.sleep(0.1)  # Small delay between checks
 
